@@ -1,0 +1,26 @@
+﻿@model Delivery
+@{
+     ViewData["Title"] = "Продукты";
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<table class="table">
+    <tr>
+            <th>Наименование</th>
+            <th>Количество</th>
+        </tr>
+    @foreach (var product in Model.Products.GroupBy(p => p.Nomenclature))
+    {
+        <tr>
+            <td>@product.Key!.Name</td>
+            <td>@product.Count()</td>
+        </tr>
+    }
+</table>
+
+<form method="get" asp-action="CheckDeliveries" asp-route-id="@(Model.SupplierId)">
+    <p>
+        <input class="btn btn-default" type="submit" value="Назад" />
+    </p>
+</form>

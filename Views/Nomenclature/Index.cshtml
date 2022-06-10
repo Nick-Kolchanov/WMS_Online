@@ -1,0 +1,125 @@
+﻿@using WMS_Online.Models.NomenclatureViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Номенклатуры";
+}
+
+<h1>Список номенклатур</h1>
+<form method="get">
+    <label>Наименование(цена): </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <label>Тип: </label>
+    <select name="type" asp-items="Model.FilterViewModel.Types"></select>
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-id="-1">Наименование</a>
+        </th>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.WorthSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-id="-1">Стоимость</a>
+        </th>
+        <th>
+            Тип
+        </th>
+    </tr>
+    @foreach (Nomenclature n in Model.Nomenclatures)
+    {
+        <tr>
+            @if (Context.GetRouteValue("id") != null && n.Id == int.Parse((string)Context.GetRouteValue("id")!))
+            {
+                <td><strong>@n.Name</strong></td>
+            }
+            else
+            {
+                <td>@n.Name</td>
+            }            
+            <td>@n.Worth</td>
+            <td>@(n.Type == null ? "Без типа" : n.Type.Name)</td>
+            <td align="center" width="100">
+                    <form asp-action="AddNomenclature" method="get"  asp-route-id="@n.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveNomenclature" method="post"  asp-route-id="@n.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="Index" method="post"  
+                    asp-route-page="@(Model.PageViewModel.PageNumber)"               
+                    asp-route-sortOrder="@(Model.SortViewModel.Current)"               
+                    asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                    asp-route-id="@n.Id">
+                        <input class="btn btn-default" type="submit" value="Характеристики" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-type="@(Model.FilterViewModel.SelectedType)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"
+       page-url-id="-1">></pagination-link>
+
+<form asp-action="AddNomenclature" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+
+
+@if (Model.NomenclatureProperties != null){
+    <h3>Характеристики:</h3>
+    <table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+        <th>
+            Значение
+        </th>
+        <th>
+            Ед.изм.
+        </th>
+    </tr>
+    @foreach (NomenclatureProperty np in Model.NomenclatureProperties)
+    {
+        <tr>
+            <td>@np.Property!.Name</td>
+            <td>@np.Value</td>
+            <td>@np.Property!.MeasurementUnit!.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="AddNomenclatureProperty" method="get"  asp-route-id="@np.PropertyId">
+                        <input class="btn btn-default" type="submit" value="Изменить значение" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveNomenclatureProperty" method="post"  asp-route-id="@np.PropertyId">
+                        <input class="btn btn-default" type="submit" value="Удалить характеристику" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddNomenclatureProperty" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить характеристику" />
+    </p>
+</form>
+}

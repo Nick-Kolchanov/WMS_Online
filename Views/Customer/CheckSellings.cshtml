@@ -1,0 +1,35 @@
+﻿@model Customer
+@{
+     ViewData["Title"] = "Покупки";
+}
+
+<h1>@ViewData["Title"] (Имя: @(Model.Name). Телефон: @(Model.Phone)</h1>
+
+
+    <table class="table">
+        <tr>
+            <th>Дата покупки</th>
+            <th>Количество товаров</th>
+            <th>Общая сумма</th>
+            <th>Персональная скидка</th>
+        </tr>
+        @foreach (var selling in Model.Sellings)
+        {
+        <tr>
+            <td>@selling.Date</td>
+            <td>@selling.ProductSellings.Count()</td>
+            <td>@selling.Worth</td>
+            <td>@selling.PersonalDiscount</td>
+            <td align="center" width="100">
+                    <form asp-action="CheckExactSelling" method="get"  asp-route-id="@selling.Id">
+                        <input class="btn btn-default" type="submit" value="Подробнее" />
+                    </form>
+            </td>
+        </tr>
+        }
+    </table>
+    <form asp-action="Index" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Назад" />
+    </p>
+</form>

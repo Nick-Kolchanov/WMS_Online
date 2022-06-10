@@ -1,0 +1,25 @@
+﻿@model Customer
+@{
+    if (Model != null && Model.Id != 0) 
+        ViewData["Title"] = "Изменение покупателя";
+    else
+        ViewData["Title"] = "Добавление покупателя";
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    @Html.EditorForModel()
+
+    @if(Model != null && Model.Id != 0)
+        @Html.Hidden("id", Model.Id)
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

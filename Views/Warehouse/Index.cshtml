@@ -1,0 +1,67 @@
+﻿@using WMS_Online.Models.WarehouseViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Склады";
+}
+
+<h1>Список складов</h1>
+<form method="get">
+    <label>Адрес(телефон): </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <label>Тип: </label>
+    <select name="type" asp-items="Model.FilterViewModel.Types"></select>
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.AddressSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Адрес</a>
+        </th>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.PhoneSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Телефон</a>
+        </th>
+        <th>
+            Тип
+        </th>
+        <th>
+            Количество товаров
+        </th>
+    </tr>
+    @foreach (Warehouse w in Model.Warehouses)
+    {
+        <tr>
+            <td>@w.Address</td>
+            <td>@w.Phone</td>
+            <td>@(w.WarehouseTypeNavigation == null ? "Без типа" : w.WarehouseTypeNavigation.Name)</td>
+            <td>@w.Products.Count</td>
+            <td align="center" width="100">
+                    <form asp-action="AddWarehouse" method="get"  asp-route-id="@w.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveWarehouse" method="post"  asp-route-id="@w.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-type="@(Model.FilterViewModel.SelectedType)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"></pagination-link>
+
+<form asp-action="AddWarehouse" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>

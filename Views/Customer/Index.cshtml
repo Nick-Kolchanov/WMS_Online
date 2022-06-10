@@ -1,0 +1,69 @@
+﻿@using WMS_Online.Models.CustomerViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Покупатели";
+}
+
+<h1>Список покупателей</h1>
+<form method="get">
+    <label>Имя(телефон): </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Имя</a>
+        </th>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.PhoneSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Телефон</a>
+        </th>
+        <th>
+            Количество покупок
+        </th>
+    </tr>
+    @foreach (Customer c in Model.Customers)
+    {
+        <tr>
+            <td>@c.Name</td>
+            <td>@c.Phone</td>
+            <td>@c.Sellings.Count</td>
+            <td align="center" width="100">
+                    <form asp-action="AddCustomer" method="get"  asp-route-id="@c.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveCustomer" method="post"  asp-route-id="@c.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+
+            @if(c.Sellings.Count != 0)
+            {
+                <td align="center" width="100">
+                    <form asp-action="CheckSellings" method="get" asp-route-id="@c.Id">
+                        <input class="btn btn-default" type="submit" value="Покупки" />
+                    </form>
+                </td>
+            }
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"></pagination-link>
+
+<form asp-action="AddCustomer" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>

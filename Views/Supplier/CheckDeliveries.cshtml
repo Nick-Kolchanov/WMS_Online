@@ -1,0 +1,31 @@
+﻿@model Supplier
+@{
+     ViewData["Title"] = "Поставки";
+}
+
+<h1>@ViewData["Title"] (ИНН: @(Model.Tin), Имя: @(Model.Name). Телефон: @(Model.Phone) E-mail: @(Model.Email)):</h1>
+
+
+    <table class="table">
+        <tr>
+            <th>Дата поставки</th>
+            <th>Количество товаров</th>
+        </tr>
+        @foreach (var delivery in Model.Deliveries)
+        {
+        <tr>
+            <td>@delivery.Date</td>
+            <td>@delivery.Products.Count</td>
+            <td align="center" width="100">
+                    <form asp-action="CheckExactDelivery" method="get"  asp-route-id="@delivery.Id">
+                        <input class="btn btn-default" type="submit" value="Подробнее" />
+                    </form>
+            </td>
+        </tr>
+        }
+    </table>
+    <form asp-action="Index" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Назад" />
+    </p>
+</form>

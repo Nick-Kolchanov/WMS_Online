@@ -1,0 +1,28 @@
+﻿@model IEnumerable<ProductSelling>
+@{
+    ViewData["Title"] = "Продукты";
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<table class="table">
+    <tr>
+            <th>Наименование</th>
+            <th>Количество</th>
+            <th>Цена</th>
+        </tr>
+    @foreach (var product in Model.GroupBy(p => p.Product.Nomenclature))
+    {
+        <tr>
+            <td>@product.Key.Name</td>            
+            <td>@product.Count()</td>
+            <td>@(product.Count() * product.Key.ProductWorths.OrderByDescending(pw => pw.Date).First(pw => pw.Date < Model.First().Selling.Date).Worth)</td>
+        </tr>
+    }
+</table>
+
+<form method="get" asp-action="CheckSellings" asp-route-id="@(Model.First().Selling.CustomerId)">
+    <p>
+        <input class="btn btn-default" type="submit" value="Назад" />
+    </p>
+</form>

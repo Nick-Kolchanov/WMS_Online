@@ -1,0 +1,53 @@
+﻿@using WMS_Online.Models.UserViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<h1>Список пользователей</h1>
+<form method="get">
+    <label>Имя: </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Имя</a>
+        </th>
+        <th>
+            Администратор
+        </th>
+    </tr>
+    @foreach (User u in Model.Users)
+    {
+        <tr>
+            <td>@u.Name</td>
+            <td>@u.IsAdmin</td>
+            <td align="center" width="100">
+                    <form asp-action="AddUser" method="get"  asp-route-id="@u.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveUser" method="post"  asp-route-id="@u.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"></pagination-link>
+
+<form asp-action="AddUser" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>

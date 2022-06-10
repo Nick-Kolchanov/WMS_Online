@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Отчеты и импорт";
+    var ImportTables = (SelectList)ViewData["ImportTables"]!;
+    var ExportTables = (SelectList)ViewData["ExportTables"]!;
+}
+
+<h1>Отчеты и импорт</h1>
+  
+
+
+<form asp-action="Import" enctype="multipart/form-data">
+    <div asp-validation-summary="All"></div>
+    <h4>Импорт</h4>
+    <label>Таблица</label>
+    <select name="importTable" asp-items="ImportTables"></select>
+    <br />
+    <label>Перезапись?</label>
+    <input name="isRewriteImport" type="checkbox" />
+    <br />
+    <label>Файл .csv</label>
+    <br />
+    <input name="importFile" type="file" /><br>
+    <br />
+    <input class="btn btn-default" type="submit" value="Импортировать" />
+</form> <br>
+
+<form asp-action="Export">
+    <h4>Экспорт</h4>
+    <label>Таблица</label>
+    <select name="exportTable" asp-items="ExportTables"></select>
+    <br /> <br />
+    <input class="btn btn-default" type="submit" value="Экспортировать" />
+</form>
+    
+<br />
+<h3>
+    Отчеты:
+</h3>
+
+<form asp-action="SalesReport">
+    <h4>О продажах</h4>
+    <input name="dateStartSales" type="date" /> - 
+    <input name="dateEndSales" type="date" />
+    <br> <br>
+    <input class="btn btn-default" type="submit" value="Получить отчет" />
+</form>
+<br>
+<form asp-action="PurchasesReport">
+    <h4>О покупках</h4>
+    <input name="dateStartPurchases" type="date" /> - 
+    <input name="dateEndPurchases" type="date" />
+    <br> <br>
+    <input class="btn btn-default" type="submit" value="Получить отчет" />
+</form>
+<br>
+<form asp-action="WarehousesReport">
+    <h4>О заполненности складов</h4>
+    <input class="btn btn-default" type="submit" value="Получить отчет" />
+</form>
+<br>
+<form asp-action="ExcelReport">
+    <h4>Сводный отчет по продуктам (Excel)</h4>
+    <input class="btn btn-default" type="submit" value="Получить отчет" />
+</form>
+

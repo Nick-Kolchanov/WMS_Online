@@ -1,0 +1,77 @@
+﻿@using WMS_Online.Models.SupplierViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Поставщики";
+}
+
+<h1>Список поставщиков</h1>
+<form method="get">
+    <label>Имя: </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.TinSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">ИНН</a>
+        </th>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)">Имя</a>
+        </th>
+        <th>
+            Телефон
+        </th>
+        <th>
+            E-mail
+        </th>
+        <th>
+            Количество поставок
+        </th>
+    </tr>
+    @foreach (Supplier s in Model.Suppliers)
+    {
+        <tr>
+            <td>@s.Tin</td>
+            <td>@s.Name</td>
+            <td>@s.Phone</td>
+            <td>@s.Email</td>
+            <td>@s.Deliveries.Count</td>
+            <td align="center" width="100">
+                    <form asp-action="AddSupplier" method="get"  asp-route-id="@s.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveSupplier" method="post"  asp-route-id="@s.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+
+            @if(s.Deliveries.Count != 0)
+            {
+                <td align="center" width="100">
+                    <form asp-action="CheckDeliveries" method="get" asp-route-id="@s.Id">
+                        <input class="btn btn-default" type="submit" value="Поставки" />
+                    </form>
+                </td>
+            }
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"></pagination-link>
+
+<form asp-action="AddSupplier" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
