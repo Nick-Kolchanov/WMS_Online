@@ -1,1 +1,1 @@
-# WMS_Online
+# WMS_Online project for HSE
