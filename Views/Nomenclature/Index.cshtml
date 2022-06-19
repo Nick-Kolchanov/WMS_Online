@@ -36,7 +36,7 @@
     @foreach (Nomenclature n in Model.Nomenclatures)
     {
         <tr>
-            @if (Context.GetRouteValue("id") != null && n.Id == int.Parse((string)Context.GetRouteValue("id")!))
+            @if (/*Context.GetRouteValue("id") != null && n.Id == int.Parse((string)Context.GetRouteValue("id")!)*/ Model.NomenclatureId == n.Id)
             {
                 <td><strong>@n.Name</strong></td>
             }
@@ -104,12 +104,14 @@
             <td>@np.Value</td>
             <td>@np.Property!.MeasurementUnit!.Name</td>
             <td align="center" width="100">
-                    <form asp-action="AddNomenclatureProperty" method="get"  asp-route-id="@np.PropertyId">
+                    <form asp-action="ChangeNomenclatureProperty" method="get" >
+                        @Html.Hidden("nId", np.NomenclatureId)
+                        @Html.Hidden("pId", np.PropertyId)
                         <input class="btn btn-default" type="submit" value="Изменить значение" />
                     </form>
             </td>
             <td align="center" width="100">
-                    <form asp-action="RemoveNomenclatureProperty" method="post"  asp-route-id="@np.PropertyId">
+                    <form asp-action="RemoveNomenclatureProperty" method="post" asp-route-nId="@np.NomenclatureId" asp-route-pId="@np.PropertyId">
                         <input class="btn btn-default" type="submit" value="Удалить характеристику" />
                     </form>
             </td>
@@ -117,7 +119,7 @@
     }
 </table>
 
-<form asp-action="AddNomenclatureProperty" method="get">
+<form asp-action="AddNomenclatureProperty" method="get" asp-route-id="@Model.NomenclatureId">
     <p>
         <input class="btn btn-default" type="submit" value="Добавить характеристику" />
     </p>

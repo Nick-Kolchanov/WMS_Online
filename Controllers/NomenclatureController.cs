@@ -54,6 +54,7 @@ namespace WMS_Online.Controllers
             IndexViewModel viewModel = new IndexViewModel(
                nomenclatures.ToList(),
                null,
+               id,
                new PageViewModel(count, page, pageSize),
                new FilterViewModel(_db.NomenclatureTypes.ToList(), type, name),
                new SortViewModel(sortOrder)
@@ -129,65 +130,58 @@ namespace WMS_Online.Controllers
 
 
         [HttpGet]
-        public IActionResult AddNomenclatureProperty(int? id)
+        public IActionResult AddNomenclatureProperty(int id)
         {
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", 1);
-
-            if (id == null)
-                return View();
-
-            var nomenclature = _db.Nomenclatures.Find(id);
-            if (nomenclature == null)
-                return NotFound();
-
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", nomenclature.TypeId);
-            return View(nomenclature);
+            var np = new NomenclatureProperty() { NomenclatureId = id };
+            ViewData["Properties"] = new SelectList(_db.Properties.ToList(), "Id", "Name", 1);
+            return View(np);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNomenclatureProperty(Nomenclature nomenclature, int worth)
+        public async Task<IActionResult> AddNomenclatureProperty(NomenclatureProperty nomenclatureProperty)
         {
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", nomenclature.TypeId);
+            ViewData["Properties"] = new SelectList(_db.Properties.ToList(), "Id", "Name", nomenclatureProperty.PropertyId);
 
             if (!ModelState.IsValid)
             {
-                return View(nomenclature);
+                return View(nomenclatureProperty);
             }
 
-            if (worth <= 0)
-            {
-                ModelState.AddModelError("", "Цена должна быть положительной");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(nomenclature);
-            }
-
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Nomenclature> newNomenclature;
-            if (nomenclature.Id != 0)
-                newNomenclature = _db.Nomenclatures.Update(nomenclature);
-            else
-                newNomenclature = _db.Nomenclatures.Add(nomenclature);
+            _db.NomenclatureProperties.Add(nomenclatureProperty);
             await _db.SaveChangesAsync();
 
-            _db.ProductWorths.Add(new ProductWorth() { Date = DateOnly.FromDateTime(DateTime.Now), NomenclatureId = newNomenclature.Entity.Id, Worth = worth });
+            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId});
+        }
 
-            await _db.SaveChangesAsync();
-            return RedirectToAction("Index");
+        [HttpGet]
+        public IActionResult ChangeNomenclatureProperty(int nId, int pId)
+        {
+            var nomenclatureProperty = _db.NomenclatureProperties.Where(np => np.NomenclatureId == nId && np.PropertyId == pId).First();
+            return View(nomenclatureProperty);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveNomenclatureProperty(int? id)
+        public async Task<IActionResult> ChangeNomenclatureProperty(NomenclatureProperty nomenclatureProperty, int nId, int pId)
         {
-            if (id == null)
-                return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return View(nomenclatureProperty);
+            }
 
-            Nomenclature nomenclature = new Nomenclature { Id = id.Value };
-            _db.Entry(nomenclature).State = EntityState.Deleted;
+            _db.NomenclatureProperties.Update(nomenclatureProperty);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveNomenclatureProperty(int nId, int pId)
+        {
+            NomenclatureProperty nomenclatureProperty = new NomenclatureProperty { NomenclatureId = nId, PropertyId = pId };
+            _db.Entry(nomenclatureProperty).State = EntityState.Deleted;
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId });
         }
     }
 }

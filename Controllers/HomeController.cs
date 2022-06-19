@@ -16,9 +16,27 @@ namespace WMS_Online.Controllers
             _db = context;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View(_db.Customers);
+        }
+
+        [HttpPost]
+        public IActionResult Index(string login, string password)
+        {
+            var passHash = Utils.PasswordHash.GetHash(password.ToCharArray());
+            var user = _db.Users.FirstOrDefault(u => u.Name == login && u.PasswordHash == passHash);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Такого пользователя нет");
+                return View();
+            }
+
+            if (user.IsAdmin)
+                return RedirectToAction("Index", "User");
+            else
+                return RedirectToAction("Index", "Product");
         }
 
         public IActionResult Privacy()

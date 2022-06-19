@@ -9,11 +9,11 @@
     <label>Наименование(цена): </label>
     <input name="name" value="@Model.FilterViewModel.SelectedName" />  
     <label>Статус: </label>
-    <select name="type" asp-items="Model.FilterViewModel.Types"></select>
+    <select name="status" asp-items="Model.FilterViewModel.Statuses"></select>
     <label>Тип: </label>
     <select name="type" asp-items="Model.FilterViewModel.Types"></select>
     <label>Склад: </label>
-    <select name="type" asp-items="Model.FilterViewModel.Types"></select>
+    <select name="warehouse" asp-items="Model.FilterViewModel.Warehouses"></select>
     <input class="btn btn-default" type="submit" value="Фильтр" />
 </form>
   
@@ -42,6 +42,9 @@
         <th>
             Количество
         </th>
+        <th>
+            Cтатус
+        </th>
     </tr>
     @foreach (Product p in Model.Products)
     {
@@ -51,6 +54,7 @@
             <td>@(p.Nomenclature.Type == null ? "Без типа" : p.Nomenclature.Type.Name)</td>
             <td>@(p.Warehouse != null ? p.Warehouse.Address : "-")</td>
             <td>@("0")</td>
+            <td>@p.Status</td>
             <td align="center" width="100">
                     <form asp-action="AddNomenclature" method="get"  asp-route-id="@p.Id">
                         <input class="btn btn-default" type="submit" value="Посмотреть адрес ячейки" />
@@ -79,5 +83,13 @@
 <form asp-action="AddNomenclature" method="get">
     <p>
         <input class="btn btn-default" type="submit" value="Добавить поставку" />
+    </p>
+</form>
+
+<br/>
+
+<form asp-action="AddNomenclature" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Перейти в корзину" />
     </p>
 </form>

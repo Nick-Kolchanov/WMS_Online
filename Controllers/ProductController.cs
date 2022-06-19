@@ -18,7 +18,7 @@ namespace WMS_Online.Controllers
             _db = context;
         }
 
-        public async Task<IActionResult> Index(int? id, string name, int type = 0, SortState sortOrder = SortState.NameAsc, int page = 1, int pageSize = 5)
+        public async Task<IActionResult> Index(int? id, string name, int type = 0, int status = 0, int warehouse = 0, SortState sortOrder = SortState.NameAsc, int page = 1, int pageSize = 5)
         {
             IQueryable<Product> products = _db.Products;
             
@@ -26,6 +26,12 @@ namespace WMS_Online.Controllers
             {
                 products = products.Where(n => n.Nomenclature.TypeId == type);
             }
+
+            if (status != 0)
+                products = products.Where(n => n.Status == (Product.ProductStatus)(status-1));
+
+            if (warehouse != 0)
+                products = products.Where(p => p.WarehouseId == warehouse);
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -54,7 +60,7 @@ namespace WMS_Online.Controllers
             IndexViewModel viewModel = new IndexViewModel(
                products.ToList(),
                new PageViewModel(count, page, pageSize),
-               new FilterViewModel(_db.NomenclatureTypes.ToList(), type, name),
+               new FilterViewModel(_db.NomenclatureTypes.ToList(), _db.Warehouses.ToList(), type, warehouse, status, name),
                new SortViewModel(sortOrder)
             );
 
