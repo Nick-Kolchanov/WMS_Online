@@ -46,30 +46,36 @@
             Cтатус
         </th>
     </tr>
-    @foreach (Product p in Model.Products)
+    @foreach (ProductToScreen p in Model.Products)
     {
         <tr>            
             <td>@p.Nomenclature.Name</td>                       
             <td>@p.Nomenclature.Worth</td>
             <td>@(p.Nomenclature.Type == null ? "Без типа" : p.Nomenclature.Type.Name)</td>
             <td>@(p.Warehouse != null ? p.Warehouse.Address : "-")</td>
-            <td>@("0")</td>
-            <td>@p.Status</td>
+            <td>@p.Count</td>
+            <td>@p.Status</td>                      
             <td align="center" width="100">
-                    <form asp-action="AddNomenclature" method="get"  asp-route-id="@p.Id">
-                        <input class="btn btn-default" type="submit" value="Посмотреть адрес ячейки" />
-                    </form>
-            </td>
-            <td align="center" width="100">
-                    <form asp-action="RemoveNomenclature" method="post"  asp-route-id="@p.Id">
+                    <form asp-action="ChangeStatus" method="get"  asp-route-id="@p.IdList.First()">
+                        @Html.Hidden("status", (int)p.Status)
                         <input class="btn btn-default" type="submit" value="Изменить статус" />
                     </form>
             </td>
-            <td align="center" width="100">
-                    <form asp-action="Index" method="post" asp-route-id="@p.Id">
+            
+            @if(p.Status == Product.ProductStatus.На_складе)
+            {
+                <td align="center" width="100">
+                    <form asp-action="AddToCart" method="post" asp-route-id="@p.IdList.First()" asp-route-count="@p.Count">
                         <input class="btn btn-default" type="submit" value="В корзину" />
                     </form>
-            </td>
+                </td>
+                <td align="center" width="100">
+                    <form asp-action="GetAddress" method="get")>
+                        @Html.Hidden("idList", string.Join('-', p.IdList.Take(5)))
+                        <input class="btn btn-default" type="submit" value="Посмотреть адрес ячейки" />
+                    </form>
+                </td>
+            }  
         </tr>
     }
 </table>
@@ -80,7 +86,7 @@
        page-url-sortorder="@(Model.SortViewModel.Current)"
        page-url-id="-1">></pagination-link>
 
-<form asp-action="AddNomenclature" method="get">
+<form asp-action="AddProducts" method="get">
     <p>
         <input class="btn btn-default" type="submit" value="Добавить поставку" />
     </p>
@@ -88,7 +94,7 @@
 
 <br/>
 
-<form asp-action="AddNomenclature" method="get">
+<form asp-action="CartView" method="get">
     <p>
         <input class="btn btn-default" type="submit" value="Перейти в корзину" />
     </p>

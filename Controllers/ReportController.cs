@@ -10,9 +10,11 @@ using WMS_Online.Data;
 using WMS_Online.Models;
 using WMS_Online.Utils;
 using TemplateEngine.Docx;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WMS_Online.Controllers
 {
+    [Authorize(Policy = "IsAdmin")]
     public class ReportController : Controller
     {
         private readonly ILogger<ReportController> _logger;

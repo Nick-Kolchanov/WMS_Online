@@ -4,66 +4,66 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WMS_Online.Data;
 using WMS_Online.Models;
-using WMS_Online.Models.NomenclatureViewModels;
+using WMS_Online.Models.InventarizationViewModels;
 
 namespace WMS_Online.Controllers
 {
     [Authorize(Policy = "IsAdmin")]
-    public class NomenclatureController : Controller
+    public class InventarizationController : Controller
     {
-        private readonly ILogger<NomenclatureController> _logger;
+        private readonly ILogger<InventarizationController> _logger;
         private readonly WmsDbContext _db;        
 
-        public NomenclatureController(ILogger<NomenclatureController> logger, WmsDbContext context)
+        public InventarizationController(ILogger<InventarizationController> logger, WmsDbContext context)
         {
             _logger = logger;
             _db = context;
         }
 
-        public async Task<IActionResult> Index(int? id, string name, int type = 0, SortState sortOrder = SortState.NameAsc, int page = 1, int pageSize = 5)
+        public async Task<IActionResult> Index(int? id, string name, int warehouse = 0, SortState sortOrder = SortState.StartDateDesc, int page = 1, int pageSize = 5)
         {
-            IQueryable<Nomenclature> nomenclatures = _db.Nomenclatures;
+            IQueryable<Inventarization> inventarizations = _db.Inventarizations;
             
-            if (type != 0)
+            if (warehouse != 0)
             {
-                nomenclatures = nomenclatures.Where(n => n.TypeId == type);
+                inventarizations = inventarizations.Where(n => n.WarehouseId == warehouse);
             }
 
             if (!string.IsNullOrEmpty(name))
             {
-                nomenclatures = nomenclatures.Where(n => n.Name.Contains(name) || n.ProductWorths.OrderByDescending(pw => pw.Date).FirstOrDefault()!.Worth.ToString().Contains(name));
+                inventarizations = inventarizations.Where(n => n.StartDate.ToString().Contains(name) || (n.EndDate.HasValue && n.EndDate.Value.ToString().Contains(name)));
             }
 
-            var count = await nomenclatures.CountAsync();
-            nomenclatures = nomenclatures.Skip((page - 1) * pageSize).Take(pageSize);
+            var count = await inventarizations.CountAsync();
+            inventarizations = inventarizations.Skip((page - 1) * pageSize).Take(pageSize);
 
             switch (sortOrder)
             {
-                case SortState.WorthAsc:
-                    nomenclatures = nomenclatures.OrderBy(s => s.ProductWorths.OrderByDescending(pw => pw.Date).FirstOrDefault()!.Worth);
+                case SortState.EndDateAsc:
+                    inventarizations = inventarizations.OrderBy(s => s.EndDate);
                     break;
-                case SortState.WorthDesc:
-                    nomenclatures = nomenclatures.OrderByDescending(s => s.ProductWorths.OrderByDescending(pw => pw.Date).FirstOrDefault()!.Worth);
+                case SortState.EndDateDesc:
+                    inventarizations = inventarizations.OrderByDescending(s => s.EndDate);
                     break;
-                case SortState.NameDesc:
-                    nomenclatures = nomenclatures.OrderByDescending(s => s.Name);
+                case SortState.StartDateAsc:
+                    inventarizations = inventarizations.OrderBy(s => s.StartDate);
                     break;
                 default:
-                    nomenclatures = nomenclatures.OrderBy(s => s.Name);
+                    inventarizations = inventarizations.OrderByDescending(s => s.StartDate);
                     break;
             }
 
             IndexViewModel viewModel = new IndexViewModel(
-               nomenclatures.ToList(),
+               inventarizations.ToList(),
                null,
                id,
                new PageViewModel(count, page, pageSize),
-               new FilterViewModel(_db.NomenclatureTypes.ToList(), type, name),
+               new FilterViewModel(_db.Warehouses.ToList(), warehouse, name),
                new SortViewModel(sortOrder)
             );
 
             if (id != null && id != -1)
-                viewModel.NomenclatureProperties = _db.NomenclatureProperties.Where(np => np.NomenclatureId == id).ToList();
+                viewModel.Discrepancies = _db.Discrepancies.Where(d => d.InventarizationId == id).ToList();
 
             return View(viewModel);
         }

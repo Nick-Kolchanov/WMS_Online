@@ -1,0 +1,32 @@
+﻿@model AddressViewModel
+@{
+    ViewData["Title"] = "Управление расположением товаров";
+
+    var Nomenclature = (string)ViewData["Nomenclature"]!;
+}
+
+<h1>@ViewData["Title"] (@Nomenclature):</h1>
+
+<table class="table">
+    <tr>
+        <th>
+            Адрес ячейки
+        </th>
+    </tr>
+    @foreach (string addr in Model.Addresses)
+    {
+        <tr>            
+            <td>@addr</td>                       
+            <td align="center" width="100">
+                    <form method="post" asp-route-id="@Model.Product.Id">
+                        <input type="text" name="newAddress"/>
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

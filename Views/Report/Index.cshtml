@@ -6,9 +6,11 @@
 
 <h1>Отчеты и импорт</h1>
   
-
-
-<form asp-action="Import" enctype="multipart/form-data">
+<table class="table">
+    <tr>
+        <td>
+            <div>
+                <form asp-action="Import" enctype="multipart/form-data">
     <div asp-validation-summary="All"></div>
     <h4>Импорт</h4>
     <label>Таблица</label>
@@ -31,9 +33,11 @@
     <br /> <br />
     <input class="btn btn-default" type="submit" value="Экспортировать" />
 </form>
-    
-<br />
-<h3>
+            </div>
+        </td>  
+        <td>
+            <div>
+                <h3>
     Отчеты:
 </h3>
 
@@ -62,4 +66,14 @@
     <h4>Сводный отчет по продуктам (Excel)</h4>
     <input class="btn btn-default" type="submit" value="Получить отчет" />
 </form>
+
+            </div>
+        </td>   
+    </tr>
+</table>
+
+
+
+    
+<br />
 

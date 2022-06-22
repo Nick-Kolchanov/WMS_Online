@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Изменение статуса";
+
+    var Id = (int)ViewData["Id"]!;
+    var OldStatus = (string)ViewData["OldStatus"]!;
+    var Statuses = (SelectList)ViewData["Statuses"]!;
+    var Warehouses = (SelectList)ViewData["Warehouses"]!;
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label>Статус:</label>
+    <p>
+        @OldStatus
+    </p>
+
+    <label>Новый статус</label>
+    <p>
+    <select name="status" asp-items="Statuses"></select>
+    </p> 
+
+    <label>Выданное местоположение товара (при смене статуса на "На складе"):</label>
+    <label>Склад</label>
+    <p>
+    <select name="warehouse" asp-items="Warehouses"></select>
+    </p> 
+    <label>Ячейка</label>
+    <p>
+    <input name="newAddress" type="text" />
+    </p> 
+    
+    @Html.Hidden("Id", Id)
+
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

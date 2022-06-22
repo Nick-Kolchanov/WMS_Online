@@ -1,0 +1,58 @@
+﻿@model Cart
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h2>Ваша корзина</h2>
+<table width="80%" align="center">
+    <thead>
+        <tr>
+            <th align="left">Наименование</th>
+            <th align="right">Цена</th>
+            <th align="right">Количество</th>
+            <th align="right">Стоимость</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model.Lines)
+        {
+            <tr>
+                <td align="left">@line.Product.Name</td>
+                <td align="left">@line.Product.Price.ToString("c")</td>
+                <td align="left">@line.Quantity</td>                
+                <td align="left">@((line.Quantity * line.Product.Price).ToString("c"))</td>
+                <td align="center">
+                    <form asp-action="RemoveFromCart" method="post"  asp-route-id="@line.Product.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr></tr>
+        <tr>
+            <td colspan="3" align="right">Всего:</td>
+            <td align="left">
+                @Model.ComputeTotalValue().ToString("c")
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<p>
+    <form asp-action="Index" method="get">
+        <input class="btn btn-default" type="submit" value="Назад" />
+    </form>
+</p>
+
+
+<div>
+    <form asp-action="ProceedPurchase" method="post">
+         <label>Телефон покупателя (не обяз.):</label>
+         <input type="text" name="phone"/>
+         <input class="btn btn-default" type="submit" value="Оформить заказ" />
+    </form>
+</div>
+
+

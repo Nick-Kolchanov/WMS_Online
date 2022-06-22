@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS_Online.Data;
 using WMS_Online.Models;
@@ -6,6 +7,7 @@ using WMS_Online.Models.SupplierViewModels;
 
 namespace WMS_Online.Controllers
 {
+    [Authorize(Policy = "IsAdmin")]
     public class SupplierController : Controller
     {
         private readonly ILogger<SupplierController> _logger;

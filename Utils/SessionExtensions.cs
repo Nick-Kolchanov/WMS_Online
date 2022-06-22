@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PizzaOnline.Utils
+namespace WMS_Online.Utils
 {
     public static class SessionExtensions
     {

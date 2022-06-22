@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Добавление поставки";
+
+    var Warehouses = (SelectList)ViewData["Warehouses"]!;
+    var Suppliers = (SelectList)ViewData["Suppliers"]!;
+    var Nomenclatures = (SelectList)ViewData["Nomenclatures"]!;
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="get">
+    <label>Наименование номенклатуры</label>
+    <p>
+    <input type="text" name="name"/>
+    <input class="btn btn-default" type="submit" value="Поиск" />
+    </p>
+</form>
+
+<br />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <label>Номенклатура</label>
+    <p>
+    <select name="nomenclatureId" asp-items="Nomenclatures"></select>
+    </p> 
+
+    <label>ИНН поставщика</label>
+    <p>
+    <select name="supplierId" asp-items="Suppliers"></select>
+    </p> 
+
+    <label>Склад</label>
+    <p>
+    <select name="warehouseId" asp-items="Warehouses"></select>
+    </p> 
+
+    <label>Количество</label>
+    <p>
+    <input type="number" name="amount"/>
+    </p>
+
+    <label>Количество</label>
+    <p>
+    <input type="date" name="date"/>
+    </p>
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

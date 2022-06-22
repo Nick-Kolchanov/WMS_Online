@@ -13,8 +13,15 @@ namespace WMS_Online.Models.ProductViewModels
             Warehouses = new SelectList(warehouses, "Id", "Address", warehouse);
 
             List<string> statuses = Enum.GetNames(typeof(Product.ProductStatus)).ToList();
-            statuses.Insert(0, "Все");
-            Statuses = new SelectList(statuses, status);
+            List<Utils.Status> selectStatuses = new List<Utils.Status>();
+            int cnt = 1;
+            for (int i = 0; i < statuses.Count; i++)
+            {
+                selectStatuses.Add(new Utils.Status { Id = cnt, Name = statuses[i] });
+                cnt++;
+            }
+            selectStatuses.Insert(0, new Utils.Status { Name = "Все", Id = 0});
+            Statuses = new SelectList(selectStatuses, "Id", "Name", status);
 
             SelectedType = type;
             SelectedWarehouse = warehouse;

@@ -1,0 +1,130 @@
+﻿@using WMS_Online.Models.InventarizationViewModels
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Инвентаризации";
+}
+
+<h1>Список инвентаризаций</h1>
+<form method="get">
+    <label>Дата: </label>
+    <input name="name" value="@Model.FilterViewModel.SelectedName" />  
+    <input class="btn btn-default" type="submit" value="Фильтр" />
+</form>
+  
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.StartDateSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-id="-1">Дата начала</a>
+        </th>
+        <th>
+            <a asp-action="Index"
+               asp-route-page="@(Model.PageViewModel.PageNumber)"
+               asp-route-sortOrder="@(Model.SortViewModel.EndDateSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-id="-1">Дата окончания</a>
+        </th>
+        <th>
+            Склад
+        </th>
+        <th>
+            Причина
+        </th>
+    </tr>
+    @foreach (Inventarization inv in Model.Inventarizations)
+    {
+        <tr>
+            @if (Model.InventarizationId == inv.Id)
+            {
+                <td><strong>@inv.StartDate</strong></td>
+                <td><strong>@inv.EndDate</strong></td>
+            }
+            else
+            {
+                <td>@inv.StartDate</td>
+                <td>@inv.EndDate</td>
+            }  
+            <td>@(inv.Warehouse == null ? "-" : inv.Warehouse.Address)</td>
+            <td>@(inv.Reason == null ? "-" : inv.Reason.Name)</td>
+            <td align="center" width="100">
+                    <form asp-action="AddInventarization" method="get"  asp-route-id="@inv.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveInventarization" method="post"  asp-route-id="@inv.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="Index" method="post"  
+                    asp-route-page="@(Model.PageViewModel.PageNumber)"               
+                    asp-route-sortOrder="@(Model.SortViewModel.Current)"               
+                    asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                    asp-route-id="@inv.Id">
+                        <input class="btn btn-default" type="submit" value="Расхождения" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+  
+<pagination-link page-model="Model.PageViewModel" page-action="Index"
+       page-url-name="@(Model.FilterViewModel.SelectedName)"
+       page-url-type="@(Model.FilterViewModel.SelectedWarehouse)"
+       page-url-sortorder="@(Model.SortViewModel.Current)"
+       page-url-id="-1">></pagination-link>
+
+<form asp-action="AddInventarization" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+
+
+@if (Model.Discrepancies != null){
+    <h3>Расхождения:</h3>
+    <table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+        <th>
+            Тип
+        </th>
+        <th>
+            Статус
+        </th>
+    </tr>
+    @foreach (Discrepancy disc in Model.Discrepancies)
+    {
+        <tr>
+            <td>@disc.Product.Nomenclature.Name</td>
+            <td>@disc.Type.Name</td>
+            <td>@disc.Status.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="ChangeDiscrepancy" method="get" >
+                        @Html.Hidden("invId", disc.InventarizationId)
+                        @Html.Hidden("pId", disc.ProductId)
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveNomenclatureProperty" method="post" asp-route-invId="@disc.InventarizationId" asp-route-pId="@disc.ProductId">
+                        <input class="btn btn-default" type="submit" value="Удалить расхождение" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddDiscrepancy" method="get" asp-route-id="@Model.InventarizationId">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить расхождение" />
+    </p>
+</form>
+}

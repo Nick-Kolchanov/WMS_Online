@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS_Online.Data;
 using WMS_Online.Models;
@@ -6,6 +7,7 @@ using WMS_Online.Models.CustomerViewModels;
 
 namespace WMS_Online.Controllers
 {
+    [Authorize(Policy = "IsAdmin")]
     public class CustomerController : Controller
     {
         private readonly ILogger<CustomerController> _logger;

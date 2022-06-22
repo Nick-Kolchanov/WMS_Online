@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WMS_Online.Data;
@@ -7,6 +8,7 @@ using WMS_Online.Utils;
 
 namespace WMS_Online.Controllers
 {
+    [Authorize(Policy = "IsAdmin")]
     public class ExtraTablesController : Controller
     {
         private readonly ILogger<ExtraTablesController> _logger;
