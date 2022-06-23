@@ -1,28 +1,46 @@
-﻿@model AddressViewModel
+﻿@model IEnumerable<Product>
 @{
     ViewData["Title"] = "Управление расположением товаров";
-
-    var Nomenclature = (string)ViewData["Nomenclature"]!;
 }
 
-<h1>@ViewData["Title"] (@Nomenclature):</h1>
+<h1>@ViewData["Title"] (@Model.First().Nomenclature.Name):</h1>
 
 <table class="table">
     <tr>
         <th>
+            Идентификатор
+        </th>
+        <th>
             Адрес ячейки
         </th>
     </tr>
-    @foreach (string addr in Model.Addresses)
+    @foreach (Product product in Model)
     {
-        <tr>            
-            <td>@addr</td>                       
-            <td align="center" width="100">
-                    <form method="post" asp-route-id="@Model.Product.Id">
-                        <input type="text" name="newAddress"/>
-                        <input class="btn btn-default" type="submit" value="Изменить" />
+        <tr>   
+            <td>@product.Id</td>   
+            <td>@product.CellAddress</td>        
+           <td align="center" width="100">
+                    <form asp-action="ChangeStatus" method="get"  asp-route-id="@product.Id">
+                        @Html.Hidden("status", (int)product.Status)
+                        <input class="btn btn-default" type="submit" value="Изменить статус" />
                     </form>
             </td>
+            
+
+            @if(product.Status == Product.ProductStatus.На_складе)
+            {
+                <td align="center" width="100">
+                    <form asp-action="AddToCart" method="post" asp-route-id="@product.Id" asp-route-count="@Model.Count()">
+                        <input class="btn btn-default" type="submit" value="В корзину" />
+                    </form>
+                </td>
+                <td align="center" width="100">
+                    <form method="post" asp-route-id="@product.Id">
+                        <input type="text" name="newAddress"/>
+                        <input class="btn btn-default" type="submit" value="Изменить ячейку хранения" />
+                    </form>
+                </td>
+            }  
         </tr>
     }
 </table>

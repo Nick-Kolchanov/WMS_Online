@@ -1,0 +1,32 @@
+﻿@model Property
+@{
+    if (Model != null && Model.Id != 0) 
+        ViewData["Title"] = "Изменение характеристики";
+    else
+        ViewData["Title"] = "Добавление характеристики";
+
+    var MeasurementUnits = (SelectList)ViewData["MeasurementUnits"];
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    @Html.EditorForModel()
+
+    <label>Единица измерения</label>
+    <p>
+        <select name="MeasurementUnitId" asp-items="MeasurementUnits"></select>
+    </p>
+
+    @if(Model != null && Model.Id != 0)
+        @Html.Hidden("id", Model.Id)
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="PropertyTable" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

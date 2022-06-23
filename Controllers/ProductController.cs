@@ -33,12 +33,18 @@ namespace WMS_Online.Controllers
             });
 
             var tmp = products.ToList();
+            var sessionProducts = GetProducts();
 
             foreach (var product in tmp)
             {
+                product.Id = Guid.NewGuid().ToString();
                 product.Nomenclature = _db.Nomenclatures.Find(product.NomenclatureId)!;
                 product.Warehouse = _db.Warehouses.Find(product.WarehouseId);
+
+                sessionProducts.Products.Add(new ProductToSession() { Id = product.Id, IdList = product.IdList, Name = product.Nomenclature.Name });                
             }
+
+            SaveProducts(sessionProducts);
 
             products = tmp.AsQueryable();
 
@@ -140,18 +146,16 @@ namespace WMS_Online.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAddress(string? idList)
-        {
-           
-            if (idList == null)
+        public IActionResult GetAddress(string? Id)
+        {           
+            if (Id == null)
                 return NotFound();
 
-            var idListNum = idList.Split('-').Select(int.Parse).ToList();
-            var addresses = _db.Products.Where(p => idListNum.Contains(p.Id)).Select(p => p.CellAddress!).ToList();
-            var product = _db.Products.First(p => idListNum.Contains(p.Id));
-            var viewModel = new AddressViewModel(product, addresses);
-            ViewData["Nomenclature"] = product.Nomenclature.Name;
-            return View(viewModel);
+            var sessionProducts = GetProducts();
+            var idList = sessionProducts.Products.First(sp => sp.Id == Id).IdList;
+            var products = _db.Products.Where(p => idList.Contains(p.Id)).ToList();
+
+            return View(products);
         }
 
         [HttpPost]
@@ -327,6 +331,16 @@ namespace WMS_Online.Controllers
         private void SaveCart(Cart cart)
         {
             HttpContext.Session.SetObjectAsJson("Cart", cart);
+        }
+
+        private ProductSession GetProducts()
+        {
+            return HttpContext.Session.GetObjectFromJson<ProductSession>("ProductSession") ?? new ProductSession();
+        }
+
+        private void SaveProducts(ProductSession productSession)
+        {
+            HttpContext.Session.SetObjectAsJson("ProductSession", productSession);
         }
     }
 }

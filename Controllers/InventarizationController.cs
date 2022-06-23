@@ -69,62 +69,71 @@ namespace WMS_Online.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddNomenclature(int? id)
+        public IActionResult AddInventarization(int? id)
         {
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", 1);
+            ViewData["Warehouses"] = new SelectList(_db.Warehouses.ToList(), "Id", "Address", 1);
+            ViewData["Reasons"] = new SelectList(_db.InventarizationReasons.ToList(), "Id", "Name", 1);
 
             if (id == null)
                 return View();
 
-            var nomenclature = _db.Nomenclatures.Find(id);
-            if (nomenclature == null)
+            var inventarization = _db.Inventarizations.Find(id);
+            if (inventarization == null)
                 return NotFound();
 
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", nomenclature.TypeId);
-            return View(nomenclature);
+            ViewData["Warehouses"] = new SelectList(_db.Warehouses.ToList(), "Id", "Address", inventarization.WarehouseId);
+            ViewData["Reasons"] = new SelectList(_db.InventarizationReasons.ToList(), "Id", "Name", inventarization.ReasonId);
+            return View(inventarization);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNomenclature(Nomenclature nomenclature, int worth)
+        public async Task<IActionResult> AddInventarization(Inventarization inventarization, DateTime StartDate, DateTime? EndDate)
         {
-            ViewData["Types"] = new SelectList(_db.NomenclatureTypes.ToList(), "Id", "Name", nomenclature.TypeId);
+            ViewData["Warehouses"] = new SelectList(_db.Warehouses.ToList(), "Id", "Address", inventarization.WarehouseId);
+            ViewData["Reasons"] = new SelectList(_db.InventarizationReasons.ToList(), "Id", "Name", inventarization.ReasonId);
 
             if (!ModelState.IsValid)
             {
-                return View(nomenclature);
+                return View(inventarization);
             }
 
-            if (worth <= 0)
+            if (inventarization.StartDate > inventarization.EndDate)
             {
-                ModelState.AddModelError("", "Цена должна быть положительной");
+                ModelState.AddModelError("", "Дата начала не может быть позже даты конца инвентаризации");
             }
 
             if (!ModelState.IsValid)
             {
-                return View(nomenclature);
+                return View(inventarization);
             }
 
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Nomenclature> newNomenclature;
-            if (nomenclature.Id != 0)
-                newNomenclature = _db.Nomenclatures.Update(nomenclature);                
+            inventarization.StartDate = DateOnly.FromDateTime(StartDate);
+            if (EndDate == null)
+            {
+                inventarization.EndDate = null;
+            }
             else
-                newNomenclature = _db.Nomenclatures.Add(nomenclature);
-            await _db.SaveChangesAsync();
+            {
+                inventarization.EndDate = DateOnly.FromDateTime(EndDate.Value);
+            }
 
-            _db.ProductWorths.Add(new ProductWorth() { Date = DateOnly.FromDateTime(DateTime.Now), NomenclatureId = newNomenclature.Entity.Id, Worth = worth });
+            if (inventarization.Id != 0)
+                _db.Inventarizations.Update(inventarization);                
+            else
+                _db.Inventarizations.Add(inventarization);
 
             await _db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveNomenclature(int? id)
+        public async Task<IActionResult> RemoveInventarization(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            Nomenclature nomenclature = new Nomenclature { Id = id.Value };
-            _db.Entry(nomenclature).State = EntityState.Deleted;
+            Inventarization inventarization = new Inventarization { Id = id.Value };
+            _db.Entry(inventarization).State = EntityState.Deleted;
             await _db.SaveChangesAsync();            
 
             return RedirectToAction("Index");
@@ -132,58 +141,64 @@ namespace WMS_Online.Controllers
 
 
         [HttpGet]
-        public IActionResult AddNomenclatureProperty(int id)
+        public IActionResult AddDiscrepancy(int id)
         {
-            var np = new NomenclatureProperty() { NomenclatureId = id };
-            ViewData["Properties"] = new SelectList(_db.Properties.ToList(), "Id", "Name", 1);
-            return View(np);
+            var disc = new Discrepancy() { InventarizationId = id };
+            ViewData["Products"] = new SelectList(_db.Products.Select(p => new {Id = p.Id, Name = p.Nomenclature.Name}).ToList(), "Id", "Name", 1);
+            ViewData["Statuses"] = new SelectList(_db.DiscrepancyStatuses.ToList(), "Id", "Name", 1);
+            ViewData["Types"] = new SelectList(_db.DiscrepancyTypes.ToList(), "Id", "Name", 1);
+            return View(disc);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNomenclatureProperty(NomenclatureProperty nomenclatureProperty)
+        public async Task<IActionResult> AddDiscrepancy(Discrepancy discrepancy)
         {
-            ViewData["Properties"] = new SelectList(_db.Properties.ToList(), "Id", "Name", nomenclatureProperty.PropertyId);
+            ViewData["Products"] = new SelectList(_db.Products.Select(p => new { Id = p.Id, Name = p.Nomenclature.Name }).ToList(), "Id", "Name", discrepancy.ProductId);
+            ViewData["Statuses"] = new SelectList(_db.DiscrepancyStatuses.ToList(), "Id", "Name", discrepancy.StatusId);
+            ViewData["Types"] = new SelectList(_db.DiscrepancyTypes.ToList(), "Id", "Name", discrepancy.TypeId);
 
             if (!ModelState.IsValid)
             {
-                return View(nomenclatureProperty);
+                return View(discrepancy);
             }
 
-            _db.NomenclatureProperties.Add(nomenclatureProperty);
+            _db.Discrepancies.Add(discrepancy);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId});
+            return RedirectToAction("Index", new { id = discrepancy.InventarizationId});
         }
 
         [HttpGet]
-        public IActionResult ChangeNomenclatureProperty(int nId, int pId)
+        public IActionResult ChangeDiscrepancy(int invId, int pId)
         {
-            var nomenclatureProperty = _db.NomenclatureProperties.Where(np => np.NomenclatureId == nId && np.PropertyId == pId).First();
-            return View(nomenclatureProperty);
+            var discrepancy = _db.Discrepancies.Where(d => d.InventarizationId == invId && d.ProductId == pId).First();
+            ViewData["Statuses"] = new SelectList(_db.DiscrepancyStatuses.ToList(), "Id", "Name", discrepancy.StatusId);
+            ViewData["Types"] = new SelectList(_db.DiscrepancyTypes.ToList(), "Id", "Name", discrepancy.TypeId);
+            return View(discrepancy);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeNomenclatureProperty(NomenclatureProperty nomenclatureProperty, int nId, int pId)
+        public async Task<IActionResult> ChangeDiscrepancy(Discrepancy discrepancy)
         {
             if (!ModelState.IsValid)
             {
-                return View(nomenclatureProperty);
+                return View(discrepancy);
             }
 
-            _db.NomenclatureProperties.Update(nomenclatureProperty);
+            _db.Discrepancies.Update(discrepancy);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId });
+            return RedirectToAction("Index", new { id = discrepancy.InventarizationId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveNomenclatureProperty(int nId, int pId)
+        public async Task<IActionResult> RemoveDiscrepancy(int invId, int pId)
         {
-            NomenclatureProperty nomenclatureProperty = new NomenclatureProperty { NomenclatureId = nId, PropertyId = pId };
-            _db.Entry(nomenclatureProperty).State = EntityState.Deleted;
+            Discrepancy discrepancy = new Discrepancy { InventarizationId = invId, ProductId = pId };
+            _db.Entry(discrepancy).State = EntityState.Deleted;
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", new { id = nomenclatureProperty.NomenclatureId });
+            return RedirectToAction("Index", new { id = discrepancy.InventarizationId });
         }
     }
 }

@@ -23,14 +23,18 @@
     </p> 
 
     <label>Выданное местоположение товара (при смене статуса на "На складе"):</label>
+    <p>
     <label>Склад</label>
-    <p>
+    
     <select name="warehouse" asp-items="Warehouses"></select>
-    </p> 
+    <br />
+
     <label>Ячейка</label>
-    <p>
+    
     <input name="newAddress" type="text" />
-    </p> 
+   
+    </p>
+    
     
     @Html.Hidden("Id", Id)
 

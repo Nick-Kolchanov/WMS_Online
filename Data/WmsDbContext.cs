@@ -88,7 +88,7 @@ namespace WMS_Online.Data
 
             modelBuilder.Entity<Discrepancy>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.InventarizationId, e.ProductId });
 
                 entity.ToTable("discrepancies");
 

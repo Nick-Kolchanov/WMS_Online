@@ -1,0 +1,46 @@
+﻿@model Inventarization
+@{
+    if (Model != null && Model.Id != 0) 
+        ViewData["Title"] = "Изменение инвентаризации";
+    else
+        ViewData["Title"] = "Добавление инвентаризации";
+
+    var Reasons = (SelectList)ViewData["Reasons"]!;
+    var Warehouses = (SelectList)ViewData["Warehouses"]!;
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label>Дата начала</label>
+    <p>
+        <input type="date" name="StartDate"/>
+    </p>
+
+    <label>Дата окончания</label>
+    <p>
+        <input type="date" name="EndDate"/>
+    </p>
+    
+    <label>Причина</label>
+    <p>
+    <select name="ReasonId" asp-items="Reasons"></select>
+    </p> 
+
+    <label>Склад</label>
+    <p>
+    <select name="WarehouseId" asp-items="Warehouses"></select>
+    </p> 
+
+    @if(Model != null && Model.Id != 0)
+        @Html.Hidden("id", Model.Id)
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

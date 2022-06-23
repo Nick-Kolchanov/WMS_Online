@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Property>
+@{
+    ViewData["Title"] = "Характеристики";
+}
+
+<h1>Список характеристик</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+        <th>
+            Единица измерения
+        </th>
+    </tr>
+    @foreach (Property p in Model)
+    {
+        <tr>
+            <td>@p.Name</td>
+            <td>@(p.MeasurementUnit == null ? "-" : p.MeasurementUnit.Name)</td>
+            <td align="center" width="100">
+                    <form asp-action="AddProperty" method="get"  asp-route-id="@p.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveProperty" method="post"  asp-route-id="@p.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddProperty" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

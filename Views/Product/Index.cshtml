@@ -54,8 +54,13 @@
             <td>@(p.Nomenclature.Type == null ? "Без типа" : p.Nomenclature.Type.Name)</td>
             <td>@(p.Warehouse != null ? p.Warehouse.Address : "-")</td>
             <td>@p.Count</td>
-            <td>@p.Status</td>                      
+            <td>@p.Status</td>      
             <td align="center" width="100">
+                    <form asp-action="GetAddress" method="get" asp-route-id="@p.Id")>
+                        <input class="btn btn-default" type="submit" value="Посмотреть продукты" />
+                    </form>
+            </td>
+            @*<td align="center" width="100">
                     <form asp-action="ChangeStatus" method="get"  asp-route-id="@p.IdList.First()">
                         @Html.Hidden("status", (int)p.Status)
                         <input class="btn btn-default" type="submit" value="Изменить статус" />
@@ -70,12 +75,11 @@
                     </form>
                 </td>
                 <td align="center" width="100">
-                    <form asp-action="GetAddress" method="get")>
-                        @Html.Hidden("idList", string.Join('-', p.IdList.Take(5)))
+                    <form asp-action="GetAddress" method="get" asp-route-id="@p.Id")>
                         <input class="btn btn-default" type="submit" value="Посмотреть адрес ячейки" />
                     </form>
                 </td>
-            }  
+            }  *@
         </tr>
     }
 </table>

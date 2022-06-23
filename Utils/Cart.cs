@@ -9,6 +9,11 @@ namespace WMS_Online.Utils
 
         public void AddItem(ProductToCart product, int quantity)
         {
+            if (productCollection.Any(pc => pc.Id == product.Id))
+            {
+                return;
+            }
+
             productCollection.Add(product);
 
             CartLine? line = lineCollection

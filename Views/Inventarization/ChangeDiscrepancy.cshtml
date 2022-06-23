@@ -1,0 +1,33 @@
+﻿@model Discrepancy
+@{
+    ViewData["Title"] = "Изменение расхождения";
+
+    var Statuses = (SelectList)ViewData["Statuses"]!;
+    var Types = (SelectList)ViewData["Types"]!;
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label>Статус</label>
+    <p>
+    <select name="StatusId" asp-items="Statuses"></select>
+    </p> 
+
+    <label>Тип</label>
+    <p>
+    <select name="TypeId" asp-items="Types"></select>
+    </p> 
+
+    @Html.Hidden("InventarizationId", Model.InventarizationId)
+    @Html.Hidden("ProductId", Model.ProductId)
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

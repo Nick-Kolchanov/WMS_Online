@@ -58,7 +58,7 @@ namespace WMS_Online.Controllers
             if (id == null)
                 return View();
 
-            var user = _db.Users.FirstOrDefault(u => u.Id == id);
+            var user = _db.Users.Find(id);
             if (user == null)
                 return NotFound();
             
