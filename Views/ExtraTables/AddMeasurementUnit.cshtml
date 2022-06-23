@@ -1,0 +1,25 @@
+﻿@model MeasurementUnit
+@{
+    if (Model != null && Model.Id != 0) 
+        ViewData["Title"] = "Изменение единицы измерения";
+    else
+        ViewData["Title"] = "Добавление единицы измерения";
+}
+
+<h1>@ViewData["Title"]:</h1>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    @Html.EditorForModel()
+
+    @if(Model != null && Model.Id != 0)
+        @Html.Hidden("id", Model.Id)
+    
+    <p>
+        <input class="btn btn-default" type="submit" value="Отправить" />
+    </p>
+</form>
+<form asp-action="MeasurementUnitTable" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

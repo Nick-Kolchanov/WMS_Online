@@ -1,0 +1,44 @@
+﻿@model IEnumerable<MeasurementUnit>
+@{
+    ViewData["Title"] = "Единицы измерения";
+}
+
+<h1>Список единиц измерения</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+        <th>
+            Короткое наименование
+        </th>
+    </tr>
+    @foreach (MeasurementUnit m in Model)
+    {
+        <tr>
+            <td>@m.Name</td>
+            <td>@m.ShortName</td>
+            <td align="center" width="100">
+                    <form asp-action="AddMeasurementUnit" method="get"  asp-route-id="@m.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveMeasurementUnit" method="post"  asp-route-id="@m.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddMeasurementUnit" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

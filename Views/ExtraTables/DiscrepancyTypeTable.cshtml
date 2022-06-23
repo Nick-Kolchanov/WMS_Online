@@ -1,0 +1,40 @@
+﻿@model IEnumerable<DiscrepancyType>
+@{
+    ViewData["Title"] = "Типы расхождений";
+}
+
+<h1>Список типов расхождений</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+    </tr>
+    @foreach (DiscrepancyType dt in Model)
+    {
+        <tr>
+            <td>@dt.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="AddDiscrepancyType" method="get"  asp-route-id="@dt.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveDiscrepancyType" method="post"  asp-route-id="@dt.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddDiscrepancyType" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

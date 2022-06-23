@@ -1,0 +1,40 @@
+﻿@model IEnumerable<NomenclatureType>
+@{
+    ViewData["Title"] = "Типы номенклатур";
+}
+
+<h1>Список типов номенклатур</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+    </tr>
+    @foreach (NomenclatureType nt in Model)
+    {
+        <tr>
+            <td>@nt.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="AddNomenclatureType" method="get"  asp-route-id="@nt.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveNomenclatureType" method="post"  asp-route-id="@nt.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddNomenclatureType" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

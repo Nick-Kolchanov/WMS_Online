@@ -1,0 +1,40 @@
+﻿@model IEnumerable<DiscrepancyStatus>
+@{
+    ViewData["Title"] = "Статусы расхождений";
+}
+
+<h1>Список статусов расхождений</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+    </tr>
+    @foreach (DiscrepancyStatus ds in Model)
+    {
+        <tr>
+            <td>@ds.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="AddDiscrepancyStatus" method="get"  asp-route-id="@ds.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveDiscrepancyStatus" method="post"  asp-route-id="@ds.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddDiscrepancyStatus" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>

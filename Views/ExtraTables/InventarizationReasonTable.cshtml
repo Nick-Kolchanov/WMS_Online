@@ -1,0 +1,40 @@
+﻿@model IEnumerable<InventarizationReason>
+@{
+    ViewData["Title"] = "Причины инвентаризаций";
+}
+
+<h1>Список причин инвентаризаций</h1>
+  
+<table class="table">
+    <tr>
+        <th>
+            Наименование
+        </th>
+    </tr>
+    @foreach (InventarizationReason ir in Model)
+    {
+        <tr>
+            <td>@ir.Name</td>
+            <td align="center" width="100">
+                    <form asp-action="AddInventarizationReason" method="get"  asp-route-id="@ir.Id">
+                        <input class="btn btn-default" type="submit" value="Изменить" />
+                    </form>
+            </td>
+            <td align="center" width="100">
+                    <form asp-action="RemoveInventarizationReason" method="post"  asp-route-id="@ir.Id">
+                        <input class="btn btn-default" type="submit" value="Удалить" />
+                    </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<form asp-action="AddInventarizationReason" method="get">
+    <p>
+        <input class="btn btn-default" type="submit" value="Добавить" />
+    </p>
+</form>
+
+ <form asp-action="Index" method="get">
+    <input class="btn btn-default" type="submit" value="Назад" />
+</form>
