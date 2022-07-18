@@ -1,6 +1,6 @@
 # WMS_Online project for HSE
 
-Warehouse management online system for small businesses.
+Online warehouse management  system for small businesses.
 
 The project was created in a hurry, so there is a bunch of things to be done and refactor.
 
